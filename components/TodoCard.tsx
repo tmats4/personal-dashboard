@@ -1,58 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import DashboardCard from "@/components/DashboardCard";
-
-type Todo = {
-  id: string;
-  text: string;
-  completed: boolean;
-};
+import { useTodos } from "@/hooks/useTodos";
 
 export default function TodoCard() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTodo, setNewTodo] = useState("");
-
-  useEffect(() => {
-    const savedTodos = localStorage.getItem("personal-dashboard-todos");
-
-    if (savedTodos) {
-      setTodos(JSON.parse(savedTodos));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("personal-dashboard-todos", JSON.stringify(todos));
-  }, [todos]);
-
-  const addTodo = () => {
-    const trimmedTodo = newTodo.trim();
-
-    if (!trimmedTodo) return;
-
-    const todo: Todo = {
-      id: crypto.randomUUID(),
-      text: trimmedTodo,
-      completed: false,
-    };
-
-    setTodos([todo, ...todos]);
-    setNewTodo("");
-  };
-
-  const toggleTodo = (id: string) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  };
-
-  const deleteTodo = (id: string) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-  };
-
-  const topThreeTodos = todos.filter((todo) => !todo.completed).slice(0, 3);
+  const {
+    newTodo,
+    setNewTodo,
+    addTodo,
+    toggleTodo,
+    deleteTodo,
+    topThreeTodos,
+  } = useTodos();
 
   return (
     <DashboardCard title="Top 3 To-Dos">
@@ -94,7 +54,21 @@ export default function TodoCard() {
                   className="h-4 w-4"
                 />
 
-                <span className="text-sm">{todo.text}</span>
+<div>
+  <span className="text-sm">{todo.text}</span>
+
+  <div className="mt-1 flex flex-wrap gap-2 text-xs text-zinc-500">
+    <span>{todo.priority}</span>
+    <span>•</span>
+    <span>{todo.category}</span>
+    {todo.dueDate && (
+      <>
+        <span>•</span>
+        <span>Due {todo.dueDate}</span>
+      </>
+    )}
+  </div>
+</div>
               </label>
 
               <button
@@ -108,9 +82,15 @@ export default function TodoCard() {
         )}
       </div>
 
-      <p className="mt-4 text-xs text-zinc-500">
-        Saved locally in this browser for now.
-      </p>
+      <div className="mt-4 flex items-center justify-between">
+        <p className="text-xs text-zinc-500">
+          Saved locally in this browser for now.
+        </p>
+
+        <Link href="/tasks" className="text-sm text-zinc-400 hover:text-zinc-100">
+          View all →
+        </Link>
+      </div>
     </DashboardCard>
   );
 }
