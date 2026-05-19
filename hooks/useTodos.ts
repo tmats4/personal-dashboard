@@ -23,17 +23,24 @@ export type Todo = {
 
 const STORAGE_KEY = "personal-dashboard-todos";
 
+type StoredTodo = Partial<Todo>;
+
 function normalizeTodos(rawTodos: unknown): Todo[] {
   if (!Array.isArray(rawTodos)) return [];
 
-  return rawTodos.map((todo: any) => ({
-    id: todo.id ?? crypto.randomUUID(),
-    text: todo.text ?? "",
-    completed: todo.completed ?? false,
-    priority: todo.priority ?? "Medium",
-    category: todo.category ?? "Personal",
-    dueDate: todo.dueDate ?? "",
-  }));
+  return rawTodos.map((todo): Todo => {
+    const storedTodo: StoredTodo =
+      todo && typeof todo === "object" ? (todo as StoredTodo) : {};
+
+    return {
+      id: storedTodo.id ?? crypto.randomUUID(),
+      text: storedTodo.text ?? "",
+      completed: storedTodo.completed ?? false,
+      priority: storedTodo.priority ?? "Medium",
+      category: storedTodo.category ?? "Personal",
+      dueDate: storedTodo.dueDate ?? "",
+    };
+  });
 }
 
 export function useTodos() {
@@ -51,6 +58,8 @@ export function useTodos() {
     if (savedTodos) {
       try {
         const parsedTodos = JSON.parse(savedTodos);
+        // Keep localStorage loading client-only without overwriting saved tasks.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTodos(normalizeTodos(parsedTodos));
       } catch {
         setTodos([]);

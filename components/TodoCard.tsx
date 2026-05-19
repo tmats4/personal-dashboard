@@ -54,21 +54,21 @@ export default function TodoCard() {
                   className="h-4 w-4"
                 />
 
-<div>
-  <span className="text-sm">{todo.text}</span>
+                <div>
+                  <span className="text-sm">{todo.text}</span>
 
-  <div className="mt-1 flex flex-wrap gap-2 text-xs text-zinc-500">
-    <span>{todo.priority}</span>
-    <span>•</span>
-    <span>{todo.category}</span>
-    {todo.dueDate && (
-      <>
-        <span>•</span>
-        <span>Due {todo.dueDate}</span>
-      </>
-    )}
-  </div>
-</div>
+                  <div className="mt-1 flex flex-wrap gap-2 text-xs text-zinc-500">
+                    <span>{todo.priority}</span>
+                    <span>/</span>
+                    <span>{todo.category}</span>
+                    {todo.dueDate && (
+                      <>
+                        <span>/</span>
+                        <span>Due {todo.dueDate}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
               </label>
 
               <button
@@ -88,7 +88,7 @@ export default function TodoCard() {
         </p>
 
         <Link href="/tasks" className="text-sm text-zinc-400 hover:text-zinc-100">
-          View all →
+          View all -&gt;
         </Link>
       </div>
     </DashboardCard>

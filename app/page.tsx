@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import DashboardCard from "@/components/DashboardCard";
 import TodoCard from "@/components/TodoCard";
 import CalendarCard from "@/components/CalendarCard";
@@ -10,19 +7,11 @@ import ReadsCard from "@/components/ReadsCard";
 import AppHeader from "@/components/AppHeader";
 
 export default function Home() {
-  const [todayLabel, setTodayLabel] = useState("");
-
-  useEffect(() => {
-    const today = new Date();
-
-    setTodayLabel(
-      today.toLocaleDateString("en-CA", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-      })
-    );
-  }, []);
+  const todayLabel = new Date().toLocaleDateString("en-CA", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <>

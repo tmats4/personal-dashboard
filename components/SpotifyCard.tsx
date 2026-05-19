@@ -8,13 +8,13 @@ export default function SpotifyCard() {
 
       <div className="mt-5 flex gap-3">
         <button className="rounded-full border border-zinc-700 px-4 py-2 text-sm">
-          ◀
+          Prev
         </button>
         <button className="rounded-full border border-zinc-700 px-4 py-2 text-sm">
           Play
         </button>
         <button className="rounded-full border border-zinc-700 px-4 py-2 text-sm">
-          ▶
+          Next
         </button>
       </div>
     </DashboardCard>
