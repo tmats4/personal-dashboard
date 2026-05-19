@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const tokens = await exchangeCodeForTokens(code);
+    redirectUrl.searchParams.set("spotify", "connected");
     const response = NextResponse.redirect(redirectUrl);
 
     setSpotifyTokenCookies(response.cookies, tokens);
@@ -26,6 +27,7 @@ export async function GET(request: NextRequest) {
     return response;
   } catch {
     redirectUrl.searchParams.set("spotify", "auth");
+    redirectUrl.searchParams.set("reason", "token-exchange");
     return NextResponse.redirect(redirectUrl);
   }
 }

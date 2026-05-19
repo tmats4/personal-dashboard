@@ -20,11 +20,15 @@ export function useSpotifyPlayer() {
   const [error, setError] = useState<string | null>(null);
 
   const refreshPlayer = useCallback(async () => {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 8000);
+
     setError(null);
 
     try {
       const response = await fetch("/api/spotify/player", {
         cache: "no-store",
+        signal: controller.signal,
       });
 
       if (response.status === 401) {
@@ -47,9 +51,16 @@ export function useSpotifyPlayer() {
 
       setIsConnected(true);
       setPlayer(data);
-    } catch {
-      setError("Could not load Spotify playback.");
+    } catch (playerError) {
+      setIsConnected(false);
+      setPlayer(null);
+      setError(
+        playerError instanceof DOMException && playerError.name === "AbortError"
+          ? "Spotify check timed out. Reset the connection, then connect again."
+          : "Could not load Spotify playback."
+      );
     } finally {
+      window.clearTimeout(timeoutId);
       setIsLoading(false);
     }
   }, []);
@@ -100,6 +111,7 @@ export function useSpotifyPlayer() {
     });
     setIsConnected(false);
     setPlayer(null);
+    setError(null);
   };
 
   return {

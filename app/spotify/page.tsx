@@ -6,6 +6,8 @@ import { useSpotifyPlayer } from "@/hooks/useSpotifyPlayer";
 
 const spotifyErrorMessages: Record<string, string> = {
   auth: "Spotify connected screen closed before the app could finish authorization. Check that your Client Secret is correct, then try connecting again.",
+  connected:
+    "Spotify authorization completed. If playback still does not show, start music on an active Spotify device and refresh.",
   config:
     "Spotify is missing local configuration. Check SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, and SPOTIFY_REDIRECT_URI in .env.local.",
   state:
@@ -57,7 +59,7 @@ export default function SpotifyPage() {
               </p>
             )}
 
-            {!isLoading && !isConnected && (
+            {!isConnected && (
               <div>
                 <h2 className="text-xl font-semibold">Connect Spotify</h2>
                 <p className="mt-3 max-w-2xl text-sm text-zinc-400">
@@ -71,6 +73,12 @@ export default function SpotifyPage() {
                   className="mt-5 inline-block rounded-xl bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white"
                 >
                   Connect Spotify
+                </a>
+                <a
+                  href="/api/spotify/logout"
+                  className="ml-3 mt-5 inline-block rounded-xl border border-zinc-700 px-4 py-3 text-sm text-zinc-300 hover:border-zinc-500 hover:text-zinc-100"
+                >
+                  Reset Spotify
                 </a>
               </div>
             )}
