@@ -39,6 +39,44 @@ function moveWeek(weekStart: string, direction: "previous" | "next") {
   return getLocalDateValue(date);
 }
 
+function formatDateOptionLabel(dateValue: string) {
+  const todayDateValue = getTodayDateValue();
+  const tomorrow = new Date(`${todayDateValue}T00:00:00`);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowDateValue = getLocalDateValue(tomorrow);
+  const formattedDate = formatCalendarDate(dateValue);
+
+  if (dateValue === todayDateValue) return `Today - ${formattedDate}`;
+  if (dateValue === tomorrowDateValue) return `Tomorrow - ${formattedDate}`;
+
+  return formattedDate;
+}
+
+function getDateOptions(selectedDate: string) {
+  const today = new Date(`${getTodayDateValue()}T00:00:00`);
+  const dateOptions = Array.from({ length: 180 }, (_, index) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + index);
+
+    return getLocalDateValue(date);
+  });
+
+  if (selectedDate && !dateOptions.includes(selectedDate)) {
+    return [selectedDate, ...dateOptions];
+  }
+
+  return dateOptions;
+}
+
+const timeOptions = Array.from({ length: 48 }, (_, index) => {
+  const hours = Math.floor(index / 2)
+    .toString()
+    .padStart(2, "0");
+  const minutes = index % 2 === 0 ? "00" : "30";
+
+  return `${hours}:${minutes}`;
+});
+
 export default function CalendarPage() {
   const {
     events,
@@ -60,6 +98,7 @@ export default function CalendarPage() {
 
   const [weekStart, setWeekStart] = useState(getWeekStart(getTodayDateValue()));
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
+  const dateOptions = useMemo(() => getDateOptions(date), [date]);
   const visibleWeekEvents = events.filter((event) =>
     weekDays.includes(event.date)
   );
@@ -120,19 +159,30 @@ export default function CalendarPage() {
                 className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 outline-none focus:border-zinc-400"
               />
 
-              <input
-                type="date"
+              <select
                 value={date}
                 onChange={(event) => setDate(event.target.value)}
                 className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 outline-none"
-              />
+              >
+                {dateOptions.map((dateOption) => (
+                  <option key={dateOption} value={dateOption}>
+                    {formatDateOptionLabel(dateOption)}
+                  </option>
+                ))}
+              </select>
 
-              <input
-                type="time"
+              <select
                 value={time}
                 onChange={(event) => setTime(event.target.value)}
                 className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 outline-none"
-              />
+              >
+                <option value="">Any time</option>
+                {timeOptions.map((timeOption) => (
+                  <option key={timeOption} value={timeOption}>
+                    {timeOption}
+                  </option>
+                ))}
+              </select>
 
               <select
                 value={type}
