@@ -1,9 +1,19 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import AppHeader from "@/components/AppHeader";
 import { useSpotifyPlayer } from "@/hooks/useSpotifyPlayer";
 
+const spotifyErrorMessages: Record<string, string> = {
+  auth: "Spotify connected screen closed before the app could finish authorization. Check that your Client Secret is correct, then try connecting again.",
+  config:
+    "Spotify is missing local configuration. Check SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, and SPOTIFY_REDIRECT_URI in .env.local.",
+  state:
+    "Spotify connection state did not match. Open the app with 127.0.0.1 instead of localhost, then try again.",
+};
+
 export default function SpotifyPage() {
+  const searchParams = useSearchParams();
   const {
     player,
     isConnected,
@@ -15,6 +25,10 @@ export default function SpotifyPage() {
     logout,
   } = useSpotifyPlayer();
   const item = player?.item;
+  const spotifyError = searchParams.get("spotify");
+  const spotifyErrorMessage = spotifyError
+    ? spotifyErrorMessages[spotifyError] ?? "Spotify connection failed."
+    : null;
 
   return (
     <>
@@ -31,6 +45,12 @@ export default function SpotifyPage() {
           </header>
 
           <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+            {spotifyErrorMessage && (
+              <div className="mb-5 rounded-xl border border-red-900 bg-red-950/20 p-4">
+                <p className="text-sm text-red-300">{spotifyErrorMessage}</p>
+              </div>
+            )}
+
             {isLoading && (
               <p className="text-sm text-zinc-400">
                 Checking Spotify connection...

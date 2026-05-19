@@ -7,6 +7,14 @@ import {
 
 export async function GET(request: NextRequest) {
   try {
+    const requestUrl = new URL(request.url);
+    const requestHost = request.headers.get("host") ?? "";
+
+    if (requestHost.startsWith("localhost")) {
+      requestUrl.hostname = "127.0.0.1";
+      return NextResponse.redirect(requestUrl);
+    }
+
     const state = crypto.randomUUID();
     const response = NextResponse.redirect(getSpotifyAuthorizeUrl(state));
 
